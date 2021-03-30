@@ -1,0 +1,34 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  height: 200px;
+  border: 1px solid black;
+  margin: 0 auto;
+}
+
+.label {
+  display: block;
+  text-align: center;
+  font-weight: 700;
+}
+
+.input {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.button {
+  width: 100px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+}
+
+button:hover,
+button:focus {
+  background-color: rgb(183, 105, 202);
+}
