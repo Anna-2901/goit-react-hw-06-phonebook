@@ -1,73 +1,91 @@
 import React, { Component } from 'react';
+import { useState } from 'react';
 import shortid from 'shortid';
 import s from './ContactForm.module.css';
+import { useSelector, useDispatch } from 'react-redux';
+import contactsActions from '../../redux/actions';
+import { getContacts } from '../../redux/selectors';
 
-class ContactForm extends Component {
-    state = {
-        name: '',
-        number: ''
+export default function ContactForm() {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+    const nameInputId = shortid.generate();
+  const numberInputId = shortid.generate();
+  
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+     
+    const handleChange = e => {
+    const { name, value } = e.currentTarget;
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'number':
+        setNumber(value);
+        break;
+      default:
+        return;
+    }
+  };
+
+    
+   const handleSubmit = e => {
+    e.preventDefault();
+    if (name === '') {
+      alert(`Введите имя контакта.`);
+      return;
     }
 
-    nameInputId = shortid.generate();
-    numberInputId = shortid.generate();
-     
-    handleChange = e => {
-    const { name, value } = e.currentTarget;
-    this.setState({ [name]: value });
-  }
+    if (number === '') {
+      alert(`Введите номер телефона`);
+      return;
+    }
 
-    
-    handleSubmit = e => {
-    const { name, number } = this.state;
-    e.preventDefault();
-    this.props.onSubmit(name, number);
-    this.reset();
-  }  
-    
-    reset() {
-    this.setState({
-      name: '',
-      number: ''
-    })
-  }
-    render() {
-        return (
-             <form className={s.form}
-        onSubmit={this.handleSubmit}>
-        <label className={s.label}
-          htmlFor={this.nameInputId}>
-          Name
-          <input 
-            className = {s.input}
-            type="text"
-            name="name"
-            value={this.state.name}
-            onChange={this.handleChange}
-            id={this.nameInputId}
-          />
-        </label>
-        <label
-          className={s.label}      
-          htmlFor={this.numberInputId}>
-          Number
-          <input
-            className ={s.input}
-            type="text"
-            name="number"
-            value={this.state.number}
-            onChange={this.handleChange}
-            id={this.numberInputId}
-          />
-        </label>
+    if (contacts.find(contact => contact.name === name)) {
+      alert(`${name} is in contacts.`);
+      reset();
+      return;
+    }
 
-        <button
-          className={s.button}
-          type="submit">
-          Add contact
-        </button>
-                </form>
-    )
-  }
+    dispatch(contactsActions.addContact(name, number));
+    reset();
+  };
+
+   const reset = () => {
+    setName('');
+    setNumber('');
+  };
+
+  return (
+    <form className={s.form} onSubmit={handleSubmit}>
+      <label className={s.label} htmlFor={nameInputId}>
+        Name
+        <input
+          className={s.input}
+          type="text"
+          name="name"
+          value={name}
+          onChange={handleChange}
+          id={nameInputId}
+        />
+      </label>
+      <label className={s.label} htmlFor={numberInputId}>
+        Number
+        <input
+          className={s.input}
+          type="text"
+          name="number"
+          value={number}
+          onChange={handleChange}
+          id={numberInputId}
+        />
+      </label>
+
+      <button className={s.button} type="submit">
+        Add contact
+      </button>
+    </form>
+  );
 }
-
-export default ContactForm;
